@@ -1,0 +1,33 @@
+import tkinter
+import tkinter.messagebox
+
+root = tkinter.Tk()
+root.title("List of things you HAVE to do")
+
+def add_task():
+  task = entry_task.get()
+  if task!="":
+    listbox_tasks.insert(tkinter.END, task)
+    entry_task.delete(0, tkinter.END)
+  else:
+    tkinter.messagebox.showwarning(title="Warning", message="Enter a task")
+
+
+def delete_task():
+  try:
+    task_index = listbox_tasks.curselection()[0]
+    listbox_tasks.delete(task_index)
+  except:
+    tkinter.messagebox.showwarning(title="Warning", message="Select a task")
+
+
+listbox_tasks = tkinter.Listbox(root, height = 13, width=50)
+listbox_tasks.pack()
+
+entry_task = tkinter.Enrty(root, width=50)
+entry_task.pack()
+
+button_add_task = tkinter.Button(root, text="Add task" , width=48, command=add_task)
+button_add_task.pack()
+
+root.mainloop()
