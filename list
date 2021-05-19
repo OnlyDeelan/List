@@ -1,33 +1,63 @@
 import tkinter
 import tkinter.messagebox
+import pickle
 
 root = tkinter.Tk()
-root.title("List of things you HAVE to do")
+root.title("To-Do List")
 
-def add_task():
+def add():
   task = entry_task.get()
   if task!="":
-    listbox_tasks.insert(tkinter.END, task)
+    listbox.insert(tkinter.END, task)
     entry_task.delete(0, tkinter.END)
   else:
     tkinter.messagebox.showwarning(title="Warning", message="Enter a task")
 
-
-def delete_task():
+def delete():
   try:
-    task_index = listbox_tasks.curselection()[0]
-    listbox_tasks.delete(task_index)
+    task_index = listbox.curselection()[0]
+    listbox.delete(task_index)
   except:
-    tkinter.messagebox.showwarning(title="Warning", message="Select a task")
+    tkinter.messagebox.showwarning(title="Warning", message="Select a task to delete")
 
+def load():
+  try:
+    tasks = pickle.load(open("task.data" , "rb"))
+    listbox.delete(0, tkinter.END)
+    for task in tasks:
+      listbox.insert(tkinter.END, task)
+  except:
+    tkinter.messagebox.showwarning(title="Warning" , message="Task not found")
 
-listbox_tasks = tkinter.Listbox(root, height = 13, width=50)
-listbox_tasks.pack()
+def save():
+  tasks = listbox.get(0, listbox.size())
+  pickle.dump(tasks, open("task.data", "wb"))
+
+frame = tkinter.Frame(root)
+frame.pack()
+
+scrollbar_tasks = tkinter.Scrollbar(frame)
+scrollbar_tasks.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+
+listbox = tkinter.Listbox(frame, height = 15, width=50)
+listbox.pack()
+
+listbox.config(yscrollcommand=scrollbar_tasks.set)
+scrollbar_tasks.config(command=listbox.yview)
 
 entry_task = tkinter.Entry(root, width=50)
 entry_task.pack()
 
-button_add_task = tkinter.Button(root, text="Add task" , width=48, command=add_task)
+button_add_task = tkinter.Button(root, text="Add task" , width=48, command=add)
 button_add_task.pack()
+
+delete_button = tkinter.Button(root, text="Delete Task" , width=48, command=delete)
+delete_button.pack()
+
+save_button = tkinter.Button(root, text="Save Task" , width=48, command= save)
+save_button.pack()
+
+load_button = tkinter.Button(root, text="Load Task" , width=48 , command=load)
+load_button.pack()
 
 root.mainloop()
